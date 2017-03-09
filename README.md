@@ -1,3 +1,6 @@
+![This is the demo page](./demopage.png)
+
+
 # [avatar-maker]
 
 This is simple website which can make avatar by inputing text and selecting decoration. 
