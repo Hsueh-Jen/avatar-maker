@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>頭像產生器</title>
+
+  <!-- jquery for Bootstrap -->
+  <script src="/library/jquery-3.1.1/jquery-3.1.1.min.js"></script>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="/library/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src='/library/bootstrap-3.3.7-dist/js/bootstrap.min.js'></script>
+
+  <!-- Vue.js script source -->
+  <script src="/library/vue/vue.min.js"></script>
+
+  <!-- html2canvas source -->
+  <script src="/library/html2canvas/html2canvas.js"></script>
+
+  <!-- original js and css -->
+  <script src="/javascripts/app.js"></script>
+  <link href="/stylesheets/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <div id="vueApp">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+
+          <a class="navbar-brand" href="#">
+            頭像產生器
+          </a>
+
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a><span class="label label-success btn-lg">目前有 {{picCount}} 個頭像產生了</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <div id="canvas">
+            <img id="avatar" :src="'/images/avatar.png'" />
+            <img id="mouth" :src="'/images/mouth/'+mouths[mouthIndex]" />
+            <img id="deco" :src="'/images/deco/'+decos[decoIndex]" />
+            <img id="bg" :src="'/images/bg/'+bgs[bgIndex]" />
+            <img id="eye" :src="'/images/eye/'+eyes[eyeIndex]" />
+            <div v-if="dialog.length>0" class="border-text">{{dialog}}</div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-6 margin-bottom">
+              <textarea id="textarea" placeholder="寫下你想說的話......" class='form-control' v-model='dialog' maxlength="30"></textarea>
+            </div>
+
+            <div class="col-md-6">
+
+              <div class="col-md-6 col-xs-6 margin-bottom">
+
+                <button @click="changeEye('prev')" class="btn btn-default" :disabled="eyeIndex==0">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </button> &nbsp眼睛&nbsp
+                
+                <button @click="changeEye('next')" class="btn btn-default" :disabled="eyeIndex==eyeCount-1">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+
+              </div>
+
+              <div class="col-md-6 col-xs-6 margin-bottom">
+
+                <button @click="changeMouth('prev')" class="btn btn-default" :disabled="mouthIndex==0">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </button> &nbsp嘴巴&nbsp
+                
+                <button @click="changeMouth('next')" class="btn btn-default" :disabled="mouthIndex==mouthCount-1">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+
+              </div>
+
+              <div class="col-md-6 col-xs-6 margin-bottom">
+               
+                <button @click="changeDeco('prev')" class="btn btn-default" :disabled="decoIndex==0">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </button> &nbsp裝飾&nbsp
+                
+                <button @click="changeDeco('next')" class="btn btn-default" :disabled="decoIndex==decoCount-1">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                
+              </div>
+
+              <div class="col-md-6 col-xs-6 margin-bottom">
+                
+                <button @click="changeBackground('prev')" class="btn btn-default" :disabled="bgIndex==0">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </button> &nbsp背景&nbsp
+                
+                <button @click="changeBackground('next')" class="btn btn-default" :disabled="bgIndex==bgCount-1">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+
+              </div>
+
+              <div class="col-md-12 col-xs-12 margin-bottom">
+                <button @click="randomFace()" class="btn btn-warning btn-block">隨機</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row">
+            <hr>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-6">
+              <button v-on:click.prevent='postImg' :disabled="showLoading" class='btn btn-primary btn-block margin-bottom'>
+                <span class="glyphicon glyphicon-send"></span>&nbsp&nbsp&nbsp投稿
+              </button>
+            </div>
+
+            <div class="col-md-6">
+              <button v-on:click.prevent='exportAsImg' class='btn btn-primary btn-block margin-bottom'>
+                <span class="glyphicon glyphicon-save"></span>&nbsp&nbsp下載
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <hr>
+      </div>
+
+      <transition-group name="list" tag="p">
+        <div v-for='img in imgs' v-bind:key="img" class="col-md-4 col-sm-12">
+          <img :src="'/pictures/'+img" class="img-responsive img-thumbnail" style="box-shadow: 0px 5px 8px #888888; margin-bottom:15px;" />
+        </div>
+      </transition-group>
+
+    </div>
+  </div>
+
+</body>
+</html>
