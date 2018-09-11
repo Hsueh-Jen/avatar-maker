@@ -15,5 +15,6 @@ You can also watch other people's avatar.
 
 ## How to use
 
-* use "npm start" to run server
-* use "npm run gulp" to run server for development. It will trigger nodemon and livereload
+* Use `npm i` or `npm install` to install modules
+* Use `npm start` to run server. Server is listening on `localhost:80`
+* Use `npm run gulp` to run server for development. It will trigger nodemon and livereload
