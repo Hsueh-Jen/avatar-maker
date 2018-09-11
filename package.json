@@ -2,15 +2,14 @@
   "name": "avatar-maker",
   "version": "0.0.0",
   "scripts": {
-     "start": "node ./bin/www",
-	   "gulp": "gulp"
+    "start": "node ./bin/www",
+    "gulp": "gulp"
   },
   "dependencies": {
     "async": "^2.1.4",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
-    "ejs": "~2.4.1",
+    "ejs": "^2.6.1",
     "express": "~4.13.4",
     "formidable": "^1.1.1",
     "morgan": "~1.7.0",
